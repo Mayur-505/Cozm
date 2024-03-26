@@ -19,6 +19,7 @@ const initialValue: {
   city: string;
   country: string;
   street_number: string | null;
+  house_number: string | null;
 } = {
   name: "",
   street_name: "",
@@ -26,6 +27,7 @@ const initialValue: {
   city: "",
   country: "",
   street_number: "",
+  house_number: ""
 };
 
 const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
@@ -53,11 +55,12 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
         postal_code: value.postal_code,
         city: value.city,
         country: value.country,
+        house_number: value.house_number
       }));
     }
   }, [data]);
 
-  const { name, street_name, postal_code, city, country, street_number } =
+  const { name, street_name, postal_code, city, country, street_number, house_number } =
     formValues;
 
   return (
@@ -76,8 +79,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={name}
           placeholder="Lorem ipsum"
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {name && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, name : "" })} />} 
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -88,10 +91,11 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           id="location"
           name="location"
           placeholder="Lorem ipsum"
+          value={house_number || ""}
           onChange={handleChange}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {house_number && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, house_number : "" })} />}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -105,8 +109,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           value={street_name || ""}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {street_name && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, street_name : "" })} />}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -120,8 +124,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           value={street_number || ""}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {street_number && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, street_number : "" })} />} 
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -135,8 +139,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           value={postal_code || ""}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {postal_code && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, postal_code : "" })} />}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -150,8 +154,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           value={city || ""}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {city && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, city : "" })} />}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -165,8 +169,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           value={country || ""}
           inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px]">
-              <img src={closeIcon} alt="closeIcon" />
+            <div className="flex items-center gap-[10px] w-[60px] justify-end">
+              {country && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, country : "" })} />}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }

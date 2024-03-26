@@ -23,13 +23,15 @@ function App() {
 
   return (
     <div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-center mt-5">
+
+        {!localStorage.getItem("token") && 
         <Button isLoading={isPending} onClick={handleLogin}>
           Login
-        </Button>
-        <Button onClick={() => setIsOpen(true)}>
+        </Button>}
+        {localStorage.getItem("token") && <Button onClick={() => setIsOpen(true)}>
           Open Company Details Modal
-        </Button>
+        </Button>}
       </div>
 
       <CompanyDetailsModal open={isOpen} onClose={() => setIsOpen(false)} />
