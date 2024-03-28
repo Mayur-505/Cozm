@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import InputWithLabel from "../common/InputWithLabel";
 import { Modal } from "../common/Modal";
 import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
 
 type CompanyDetailsModalProps = {
   open: boolean;
@@ -27,11 +28,12 @@ const initialValue: {
   city: "",
   country: "",
   street_number: "",
-  house_number: ""
+  house_number: "",
 };
 
 const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
   const [formValues, setFormValues] = useState(initialValue);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["address_by_company", { country: "UK", name: formValues.name }],
@@ -42,6 +44,9 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (name === "name") {
+      setIsOpen(true);
+    }
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -55,13 +60,21 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
         postal_code: value.postal_code,
         city: value.city,
         country: value.country,
-        house_number: value.house_number
+        house_number: value.house_number,
       }));
     }
   }, [data]);
 
-  const { name, street_name, postal_code, city, country, street_number, house_number } =
-    formValues;
+  const {
+    name,
+    street_name,
+    postal_code,
+    city,
+    country,
+    street_number,
+    house_number,
+  } = formValues;
+  console.log("isOpenisOpen", isOpen);
 
   return (
     <Modal
@@ -71,21 +84,49 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
       className="max-w-[912px]"
     >
       <div className="grid grid-cols-2 gap-x-[73px] gap-y-[40px]">
-        <InputWithLabel
-          label="Name"
-          id="name"
-          name="name"
-          onChange={handleChange}
-          value={name}
-          placeholder="Lorem ipsum"
-          inputWithIcon={
-            <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {name && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, name : "" })} />} 
-              <img src={questionIcon} alt="questionIcon" />
-            </div>
-          }
-          isRequired
-        />
+        <div className="relative">
+          <InputWithLabel
+            label="Name"
+            id="name"
+            name="name"
+            onChange={handleChange}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            value={name}
+            placeholder="Lorem ipsum"
+            inputWithIcon={
+              <div className="flex items-center gap-[10px] w-[60px] justify-end">
+                {name && (
+                  <img
+                    src={closeIcon}
+                    alt="closeIcon"
+                    onClick={() =>
+                      setFormValues((prev) => ({ ...prev, name: "" }))
+                    }
+                  />
+                )}
+                <img src={questionIcon} alt="questionIcon" />
+              </div>
+            }
+            isRequired
+          />
+          <ScrollArea className="min-h-[172px] !absolute shadow-[rgba(149,157,165,0.2)_0px_8px_24px] w-full top-full">
+          <div className=" z-50 p-2.5 rounded-[10px] bg-white flex flex-col gap-2 h-full">
+            <p>Hello</p>
+            <p>Hello</p>
+
+            <p>Hello</p>
+            <p>Hello</p>
+            <p>Hello</p>
+            <p>Hello</p>
+            <p>Hello</p>
+            <p>Hello</p>
+
+          </div>
+          </ScrollArea>
+        </div>
+
         <InputWithLabel
           label="Location"
           id="location"
@@ -95,7 +136,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           onChange={handleChange}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {house_number && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, house_number : "" })} />}
+              {house_number && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, house_number: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -110,7 +159,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={street_name || ""}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {street_name && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, street_name : "" })} />}
+              {street_name && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, street_name: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -125,7 +182,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={street_number || ""}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {street_number && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, street_number : "" })} />} 
+              {street_number && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, street_number: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -140,7 +205,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={postal_code || ""}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {postal_code && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, postal_code : "" })} />}
+              {postal_code && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, postal_code: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -155,7 +228,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={city || ""}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {city && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, city : "" })} />}
+              {city && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, city: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
@@ -170,7 +251,15 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           value={country || ""}
           inputWithIcon={
             <div className="flex items-center gap-[10px] w-[60px] justify-end">
-              {country && <img src={closeIcon} alt="closeIcon" onClick={() => setFormValues({ ...initialValue, country : "" })} />}
+              {country && (
+                <img
+                  src={closeIcon}
+                  alt="closeIcon"
+                  onClick={() =>
+                    setFormValues((prev) => ({ ...prev, country: "" }))
+                  }
+                />
+              )}
               <img src={questionIcon} alt="questionIcon" />
             </div>
           }
