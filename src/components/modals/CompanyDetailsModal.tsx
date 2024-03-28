@@ -7,6 +7,8 @@ import InputWithLabel from "../common/InputWithLabel";
 import { Modal } from "../common/Modal";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
+import { AddressResult } from "@/lib/types";
+import { Loader2 } from "lucide-react";
 
 type CompanyDetailsModalProps = {
   open: boolean;
@@ -33,38 +35,8 @@ const initialValue: {
 
 const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
   const [formValues, setFormValues] = useState(initialValue);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { data } = useQuery({
-    queryKey: ["address_by_company", { country: "UK", name: formValues.name }],
-    queryFn: () =>
-      searchAddressByName({ country: "UK", name: formValues.name }),
-    enabled: open && formValues.name.length > 0,
-  });
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "name") {
-      setIsOpen(true);
-    }
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-  };
-
-  useEffect(() => {
-    if (data && data[0]) {
-      const value = data[0];
-      setFormValues((prev) => ({
-        ...prev,
-        name: value.name,
-        street_name: value.street_name,
-        postal_code: value.postal_code,
-        city: value.city,
-        country: value.country,
-        house_number: value.house_number,
-      }));
-    }
-  }, [data]);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showOptions, setShowOptions] = useState(false);
   const {
     name,
     street_name,
@@ -74,25 +46,68 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
     street_number,
     house_number,
   } = formValues;
-  console.log("isOpenisOpen", isOpen);
+
+  const { data, refetch, isLoading } = useQuery({
+    queryKey: ["address_by_company", { country: "UK", name: searchQuery }],
+    queryFn: () => searchAddressByName({ country: "UK", name: searchQuery }),
+    enabled: false,
+  });
+
+  const handleClose = () => {
+    setFormValues(initialValue);
+    setSearchQuery("");
+    setShowOptions(false);
+    onClose();
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "name") {
+      setSearchQuery(value);
+    }
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) {
+        setShowOptions(true);
+        refetch();
+      } else {
+        setShowOptions(false);
+      }
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, refetch]);
+
+  const handleSelectAddress = (item: AddressResult) => {
+    setFormValues((prev) => ({
+      ...prev,
+      name: item?.name || "",
+      street_name: item?.street_name || "",
+      postal_code: item?.postal_code || "",
+      city: item?.city || "",
+      country: item?.country || "",
+      house_number: item?.house_number || "",
+    }));
+    setSearchQuery("");
+  };
 
   return (
     <Modal
       title="Destination Company Address"
       isOpen={open}
-      onClose={onClose}
-      className="max-w-[912px]"
+      onClose={handleClose}
+      className=""
     >
-      <div className="grid grid-cols-2 gap-x-[73px] gap-y-[40px]">
+      <div className="grid grid-cols-2 gap-x-[73px] gap-y-[40px]  max-h-[500px] overflow-auto">
         <div className="relative">
           <InputWithLabel
             label="Name"
             id="name"
             name="name"
             onChange={handleChange}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
             value={name}
             placeholder="Lorem ipsum"
             inputWithIcon={
@@ -111,20 +126,35 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
             }
             isRequired
           />
-          <ScrollArea className="min-h-[172px] !absolute shadow-[rgba(149,157,165,0.2)_0px_8px_24px] w-full top-full">
-          <div className=" z-50 p-2.5 rounded-[10px] bg-white flex flex-col gap-2 h-full">
-            <p>Hello</p>
-            <p>Hello</p>
-
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-
-          </div>
-          </ScrollArea>
+          {showOptions && (
+            <ScrollArea
+              className={`!absolute shadow-[rgba(149,157,165,0.2)_0px_8px_24px] w-full top-full z-50 bg-white ${
+                data && data?.length > 5 ? "min-h-[172px] h-full" : ""
+              }`}
+            >
+              {isLoading ? (
+                <div className="w-full h-10 flex justify-center items-center">
+                  <Loader2 className="animate-spin h-4 w-4" />
+                </div>
+              ) : (
+                <div className="flex p-1 flex-col h-full">
+                  {data?.map((item, i) => {
+                    return (
+                      <p
+                        className="p-2 cursor-pointer hover:bg-gray-50"
+                        onClick={() => {
+                          handleSelectAddress(item);
+                        }}
+                        key={i}
+                      >
+                        {item.name}
+                      </p>
+                    );
+                  })}
+                </div>
+              )}
+            </ScrollArea>
+          )}
         </div>
 
         <InputWithLabel
@@ -266,8 +296,8 @@ const CompanyDetailsModal = ({ onClose, open }: CompanyDetailsModalProps) => {
           isRequired
         />
       </div>
-      <div className="flex justify-end items-center gap-5 mt-[90px]">
-        <Button variant={"outline"} onClick={onClose}>
+      <div className="flex justify-end items-center gap-5 mt-[70px]">
+        <Button variant={"outline"} onClick={handleClose}>
           Close
         </Button>
         <Button>Add More</Button>

@@ -35,7 +35,7 @@ const api = ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      Version: "CIBT",
+      Version: "COZM",
       ...headers,
     },
   };
